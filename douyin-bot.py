@@ -34,7 +34,7 @@ adb.test_device()
 config = config.open_accordant_config()
 
 # 审美标准
-BEAUTY_THRESHOLD = 80
+BEAUTY_THRESHOLD = 40
 
 # 最小年龄
 GIRL_MIN_AGE = 14
@@ -99,6 +99,8 @@ def thumbs_up():
     点赞
     :return:
     """
+    print('star bottom')
+    print(config['star_bottom']['x'])
     cmd = 'shell input tap {x} {y}'.format(
         x=config['star_bottom']['x'] + _random_bias(10),
         y=config['star_bottom']['y'] + _random_bias(10)
@@ -117,25 +119,27 @@ def tap(x, y):
 
 def auto_reply():
 
-    msg = "垆边人似月，皓腕凝霜雪。就在刚刚，我的心动了一下，小姐姐你好可爱呀_Powered_By_Python"
+    msg = "垆边人似月，皓腕凝霜雪。就在刚刚，我的心动了一下，小姐姐你好可爱呀"
 
     # 点击右侧评论按钮
     tap(config['comment_bottom']['x'], config['comment_bottom']['y'])
     time.sleep(1)
     #弹出评论列表后点击输入评论框
-    tap(config['comment_text']['x'], config['comment_text']['y'])
-    time.sleep(1)
+    #tap(config['comment_text']['x'], config['comment_text']['y'])
+    #time.sleep(1)
     #输入上面msg内容 ，注意要使用ADB keyboard  否则不能自动输入，参考： https://www.jianshu.com/p/2267adf15595
     cmd = 'shell am broadcast -a ADB_INPUT_TEXT --es msg {text}'.format(text=msg)
     adb.run(cmd)
-    time.sleep(1)
+    time.sleep(3)
     # 点击发送按钮
     tap(config['comment_send']['x'], config['comment_send']['y'])
-    time.sleep(0.5)
+    time.sleep(2)
+    tap(config['comment_send']['x'], config['comment_send']['y'])
+    time.sleep(3)
 
     # 触发返回按钮, keyevent 4 对应安卓系统的返回键，参考KEY 对应按钮操作：  https://www.cnblogs.com/chengchengla1990/p/4515108.html
-    cmd = 'shell input keyevent 4'
-    adb.run(cmd)
+    #cmd = 'shell input keyevent 4'
+    #adb.run(cmd)
 
 
 def parser():
@@ -169,48 +173,51 @@ def main():
         with open('optimized.png', 'rb') as bin_data:
             image_data = bin_data.read()
 
-        ai_obj = apiutil.AiPlat(AppID, AppKey)
-        rsp = ai_obj.face_detectface(image_data, 0)
+        #ai_obj = apiutil.AiPlat(AppID, AppKey)
+        #rsp = ai_obj.face_detectface(image_data, 0)
 
-        major_total = 0
+        major_total = 10
         minor_total = 0
 
-        if rsp['ret'] == 0:
-            beauty = 0
-            for face in rsp['data']['face_list']:
+        if True:
+            beauty = 50
+            # for face in rsp['data']['face_list']:
 
-                msg_log = '[INFO] gender: {gender} age: {age} expression: {expression} beauty: {beauty}'.format(
-                    gender=face['gender'],
-                    age=face['age'],
-                    expression=face['expression'],
-                    beauty=face['beauty'],
-                )
-                print(msg_log)
-                face_area = (face['x'], face['y'], face['x']+face['width'], face['y']+face['height'])
-                img = Image.open("optimized.png")
-                cropped_img = img.crop(face_area).convert('RGB')
-                cropped_img.save(FACE_PATH + face['face_id'] + '.png')
-                # 性别判断
-                if face['beauty'] > beauty and face['gender'] < 50:
-                    beauty = face['beauty']
+            #     msg_log = '[INFO] gender: {gender} age: {age} expression: {expression} beauty: {beauty}'.format(
+            #         gender=face['gender'],
+            #         age=face['age'],
+            #         expression=face['expression'],
+            #         beauty=face['beauty'],
+            #     )
+            #     print(msg_log)
+            #     face_area = (face['x'], face['y'], face['x']+face['width'], face['y']+face['height'])
+            #     img = Image.open("optimized.png")
+            #     cropped_img = img.crop(face_area).convert('RGB')
+            #     cropped_img.save(FACE_PATH + face['face_id'] + '.png')
+            #     # 性别判断
+            #     if face['beauty'] > beauty and face['gender'] < 50:
+            #         beauty = face['beauty']
 
-                if face['age'] > GIRL_MIN_AGE:
-                    major_total += 1
-                else:
-                    minor_total += 1
+            #     if face['age'] > GIRL_MIN_AGE:
+            #         major_total += 1
+            #     else:
+            #         minor_total += 1
 
             # 是个美人儿~关注点赞走一波
             if beauty > BEAUTY_THRESHOLD and major_total > minor_total:
                 print('发现漂亮妹子！！！')
+                #1080*2400
                 thumbs_up()
-                follow_user()
+                thumbs_up()
+                thumbs_up()
+                thumbs_up()
+                thumbs_up()
+                thumbs_up()
+                # follow_user()
 
                 if cmd_args['reply']:
                     auto_reply()
 
-        else:
-            print(rsp)
-            continue
 
 
 if __name__ == '__main__':

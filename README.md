@@ -59,6 +59,9 @@ MIT
 
 如果你有什么问题请提 Issue，或者关注我的微信公众号留言，我都会一一解答
 
+1. ADB安装，https://github.com/wangshub/wechat_jump_game
+2. ADB keyboard 安装：https://www.jianshu.com/p/2267adf15595
+
 <p align="center">
 <img src="screenshot/qrcode.jpg" title="Logo" width="150">
 </>
