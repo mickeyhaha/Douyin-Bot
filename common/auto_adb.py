@@ -35,7 +35,7 @@ class auto_adb():
         return output
 
     def run(self, raw_command):
-        print(raw_command)
+        #print(raw_command)
         command = '{} {}'.format(self.adb_path, raw_command)
         process = os.popen(command)
         output = process.read()

@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
+from ast import If
 import sys
 import random
 import time
 from PIL import Image
 import argparse
+import string
 
 if sys.version_info.major != 3:
     print('Please run under Python3')
@@ -116,10 +118,19 @@ def tap(x, y):
     )
     adb.run(cmd)
 
+def generate_random_string(length):
+    letters = string.ascii_letters + string.digits
+    result_str = ''.join(random.choice(letters) for i in range(length))
+    return result_str
+
+def generate_random_emoji(length):
+    emojis = ["😀", "😂", "😍", "🤔", "🐶", "🍕"]
+    result_str = ''.join(emojis[random.randint(0, len(emojis)-1)] for i in range(length))
+    return result_str
 
 def auto_reply():
 
-    msg = "垆边人似月，皓腕凝霜雪。就在刚刚，我的心动了一下，小姐姐你好可爱呀"
+    msg = "垆边人似月，皓腕凝霜雪。就在刚刚，我的心动了一下，小姐姐你好可爱呀。" + generate_random_emoji(random.randint(0,10))
 
     # 点击右侧评论按钮
     tap(config['comment_bottom']['x'], config['comment_bottom']['y'])
@@ -134,8 +145,9 @@ def auto_reply():
     # 点击发送按钮
     tap(config['comment_send']['x'], config['comment_send']['y'])
     time.sleep(2)
-    tap(config['comment_send']['x'], config['comment_send']['y'])
-    time.sleep(3)
+    # 点击中间上方reset（中间不行，PK模式会触发关注）
+    tap(config['center_point']['x'], 300)
+    time.sleep(2)
 
     # 触发返回按钮, keyevent 4 对应安卓系统的返回键，参考KEY 对应按钮操作：  https://www.cnblogs.com/chengchengla1990/p/4515108.html
     #cmd = 'shell input keyevent 4'
@@ -207,12 +219,12 @@ def main():
             if beauty > BEAUTY_THRESHOLD and major_total > minor_total:
                 print('发现漂亮妹子！！！')
                 #1080*2400
-                thumbs_up()
-                thumbs_up()
-                thumbs_up()
-                thumbs_up()
-                thumbs_up()
-                thumbs_up()
+                # 点赞
+                while True:
+                    thumbs_up()
+                    print('thumbs up')
+                    if _random_bias(10) % 2 == 1:
+                        break
                 # follow_user()
 
                 if cmd_args['reply']:
